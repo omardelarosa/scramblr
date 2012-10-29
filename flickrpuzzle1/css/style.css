@@ -1,0 +1,112 @@
+body{};
+
+/*
+
+piece# = (left, top)
+
+piece 1 = 0,0
+piece 2 = 200,0
+piece 3 = 400,0
+piece 4 = 0,200
+piece 5 = 200,200
+piece 6 = 400,200
+piece 7 = 0,400
+piece 8 = 200,400
+piece 9 = 400,400
+
+piece 1 - piece 2 - piece 3
+
+piece 4 - piece 5 - piece 6
+
+piece 7 - piece 8 - piece 9
+
+*/
+
+#wrapper{
+height: 600px;
+width: 600px;
+margin-left:auto;
+margin-right:auto;
+margin-top: 0px;
+margin-bottom: 0px;
+padding: 0px 0px 0px 0px;
+border:0px;
+float:left;
+left:0px;
+top:0px;
+position:absolute;
+}
+
+ul{
+height: 600px;
+width: 600px;
+padding: 0px 0px 0px 0px;
+border:0px;
+margin:0px 0px 0px 0px;
+}
+
+ul #pieces{
+width:1px;
+height:1px;
+display:none;
+overflow:hidden;
+}
+
+#wrapper li {
+display:block;
+float:left;
+}
+
+.piece1{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -0px -0px;
+ }
+
+.piece2{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -200px -0px;
+ }
+
+.piece3{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -400px -0px;
+ }
+
+.piece4{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -0px -200px;
+ }
+
+.piece5{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -200px -200px;
+ }
+
+.piece6{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -400px -200px;
+ }
+
+.piece7{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -0px -400px;
+ }
+
+.piece8{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -200px -400px;
+ }
+
+.piece9{
+	height               : 200px;
+	width                : 200px;
+	background-position  : -400px -400px;
+ }
