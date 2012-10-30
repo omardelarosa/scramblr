@@ -28,14 +28,15 @@ $('#widthInput').slider({
 				}
 	});
 
+$( "#puzzleWidth" ).val("2x2 boxes");
 
 //instruction button begins
 $('#instButton').click(function(){
 
 	if ( $('#instructions').css('display') == "none" ){  //checks if instructions are hidden
-		$('#instructions').show(200);
+		$('#instructions').show(50);
 	} else {
-		$('#instructions').hide(200);  //hides instructions
+		$('#instructions').hide(50);  //hides instructions
 	};
 });
 
@@ -58,7 +59,8 @@ $('#instButton').hover(  //when mouse hovers over instButton...
 $('#generate').click(function(){  //---- change 'p' to submit button.
 
 	$('ul #boxes').empty();  //empties existing LI elements in box region
-	$('#instructions').hide();  //hides instructions
+	$('#instructions').hide(50);  //hides instructions
+	
 
 	var tagInputVal = $('#tagInput').attr("value");
 	var boxWidth = $('#widthInput').slider('value');  //gets slider numerical value
@@ -118,7 +120,12 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 	var unitWidth = 600 / boxWidth;		//calculates (in pixels) box unit Width
 	var positionX = ((i+1)%boxWidth)*(unitWidth* -1);  //calculates X pos of boxSprite --NEED FIX
-	var positionY = Math.floor((i+1)/boxWidth)*(unitWidth * -1);  //calculates Y pos of box Sprite
+	 
+	if ((i+1) == boxNumTotal) {		//corrects issue with "empty" box.
+		var positionY = 0;
+	} else {
+		var positionY = (Math.floor((i+1)/boxWidth))*(unitWidth * -1);   //calculates Y pos of box Sprite
+	};
 
 	$('#'+boxNum+'').attr('style','background-repeat:no-repeat;background-image:url('+imgUrl+');background-size:600px 600px;height:'+unitWidth+'px;width:'+unitWidth+'px;background-position:'+positionX+'px '+positionY+'px;');    // formats wrapper DIV to 600x600px
 	
@@ -152,6 +159,8 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 });   // ---- end JSON data grab----
 
+$('#info').show(50).css('border','5px solid black');
+
 }; // --- end of form-validation if/else statement
 
 	return false;  // <---- must add this when "submit button" is made.
@@ -159,6 +168,7 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 
 });  // ----- end "get photo and data" function" -----
+
 
 
 });
