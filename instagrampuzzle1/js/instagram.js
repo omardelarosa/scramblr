@@ -4,6 +4,7 @@ var accessToken = window.location.hash.slice(14);
 var photoId = "";
 var tagInputVal = "";
 
+
 console.log(accessToken);
 
 $('#boxes').sortable();
@@ -15,6 +16,17 @@ $('#boxes').bind('touchmove', function(e) {
 }, false);
  
 */
+
+$('#widthInput').slider({
+	value:2,
+	min:2,
+	max:32,
+	step:2,
+	slide: function( event, ui ) {
+                $( "#puzzleWidth" ).val(ui.value+"x"+ui.value+" boxes");
+				return ui.value;
+				}
+	});
 
 
 //instruction button begins
@@ -49,7 +61,8 @@ $('#generate').click(function(){  //---- change 'p' to submit button.
 	$('#instructions').hide();  //hides instructions
 
 	var tagInputVal = $('#tagInput').attr("value");
-	var boxWidth = $('#widthInput').attr("value");
+	var boxWidth = $('#widthInput').slider('value');  //gets slider numerical value
+
 	var spaceFilter = / /g;	
 	
 

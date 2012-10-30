@@ -35,6 +35,11 @@ border: 5px solid black;
 padding: 10px 0px 0px 0px;
 }
 
+#widthInput {
+width: 240px;
+margin-left: 20px;
+}
+
 
 #logo {
 position: relative;
@@ -103,3 +108,4 @@ margin:0px 0px 0px 0px;
 display:block;
 float:left;
 }
+
