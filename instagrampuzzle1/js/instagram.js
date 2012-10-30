@@ -21,9 +21,9 @@ $('#boxes').bind('touchmove', function(e) {
 $('#instButton').click(function(){
 
 	if ( $('#instructions').css('display') == "none" ){  //checks if instructions are hidden
-		$('#instructions').show();
+		$('#instructions').show(200);
 	} else {
-		$('#instructions').hide();  //hides instructions
+		$('#instructions').hide(200);  //hides instructions
 	};
 });
 
