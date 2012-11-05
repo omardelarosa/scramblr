@@ -1,8 +1,15 @@
 $(document).ready(function(){  
 
-var accessToken = window.location.hash.slice(14);
-var photoId = "";
-var tagInputVal = "";
+userName = "";
+userPhotoUrl = "";
+userProfileUrl = "";
+userId = "";
+userCaption = "";
+photoId = "";
+accessToken = window.location.hash.slice(14);
+tagInputVal = "";
+data = {};
+
 
 
 console.log(accessToken);
@@ -76,18 +83,21 @@ $('#generate').click(function(){  //---- change 'p' to submit button.
 	} else if(tagInputVal == ""){   // checks if tagInputVal is empty
 		alert('Please enter a keyword or tag!');   // prompts if empty tagInputVal
 	} else {
-$.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access_token="+accessToken+"&scope=likes&callback=?",function(data){   //--- begin JSON data grab---
+$.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access_token="+accessToken+"&scope=likes+comments+relationships&callback=?",function(data){   //--- begin JSON data grab---
 
-	var index = Math.floor((Math.random()*10)+1);  //finds random integer btwn 1-10
-	var imgUrl = data.data[index].images.standard_resolution.url;  //Instagram IMG URL from JSON
-	var boxNumTotal = boxWidth*boxWidth;
+	console.log(data);
+	data = data;
+
+	index = Math.floor((Math.random()*10)+1);  //finds random integer btwn 1-10
+	imgUrl = data.data[index].images.standard_resolution.url;  //Instagram IMG URL from JSON
+	boxNumTotal = boxWidth*boxWidth;
 	
-	var boxOrigSeqArr = new Array(boxNumTotal);		//makes array with sequence of original IDs
+	boxOrigSeqArr = new Array(boxNumTotal);		//makes array with sequence of original IDs
 		for(var i=0;i<boxNumTotal;i++){
 		boxOrigSeqArr[i] = i;
 		};
 	
-	var boxRandSeqArr = new Array(boxNumTotal);    //makes array with for randomized IDs sequence
+	boxRandSeqArr = new Array(boxNumTotal);    //makes array with for randomized IDs sequence
 		for(var i=0;i<boxNumTotal;i++){
 		boxRandSeqArr[i] = i;
 		};
@@ -114,7 +124,7 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 	$('ul #boxes li:eq('+boxRandSeqArr[i]+')').append('<div class="box" style="" id="'+(i+1)+'">&nbsp;</div>'); //adds .box div to random li from boxRandSeqArr
 
-	console.log("Destination LI index is "+boxRandSeqArr[i]+"and source DIV is "+(i+1)+"");
+	console.log("Destination LI index is "+boxRandSeqArr[i]+" and source DIV is "+(i+1)+"");
 
 	var boxNum = (i+1)+'';  //turns i into ID that is also a string
 
@@ -134,12 +144,12 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 // ----- pulls photo-meta data from Instagram's JSON
 
-	var userName = data.data[index].user.username;
-	var userPhotoUrl = data.data[index].user.profile_picture;
-	var userProfileUrl = data.data[index].link;
-	var userId = "";
-	var userCaption= data.data[index].caption.text;
-	var photoId = data.data[index].id;
+	userName = data.data[index].user.username;
+	userPhotoUrl = data.data[index].user.profile_picture;
+	userProfileUrl = data.data[index].link;
+	userId = "";
+	userCaption= data.data[index].caption.text;
+	photoId = data.data[index].id;
 
 //------ populates photo meta data info on sidebar----
 
@@ -153,11 +163,19 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 	$('#caption').html('<p>'+userCaption+'</p>');  //displays photo caption info
 
-	console.log("1 "+photoId); //checks photo Id
 
 //----- end meta data populating
 
 });   // ---- end JSON data grab----
+
+//----- begin LIKE button ----
+
+
+
+
+
+
+//----- end LIKE button ----
 
 $('#info').show(50).css('border','5px solid black');
 
@@ -169,13 +187,53 @@ $('#info').show(50).css('border','5px solid black');
 
 });  // ----- end "get photo and data" function" -----
 
+$('#likeButton').click(function(){
 
+	$('#photoId').html('<a>Coming Soon!</a>');
+
+/*
+	$.post('https://api.instagram.com/v1/media/'+photoId+'/likes?_method=POST', "{ access_token:"+accessToken+"}", 
+function(data) { 
+            console.log(accessToken);
+			console.log(data.meta.code);
+			console.log(data);
+          $('#photoId').html('<a>Liked!</a>');
+    }); 
+*/
 
 });
 
+
+$('#doneButton').click(function(){
+
+	for (i=1;i<=boxNumTotal;i++){
+
+		if ( i == $('#boxes li:eq('+i+') div').attr('id')) {
+
+		continue;
+
+		} else if (i == boxNumTotal) {
+
+		alert ('You win!');
+
+		} else { 
+
+		alert('Please try again!');
+		
+		break;
+
+		};
+
+	};
+
+});
+
+
+
+});
 // ----- things to do: ---------
 
-/* 
+/*
 
 -style the page
 -feature: search only photos by their friends
@@ -196,7 +254,5 @@ and returns "win" function.
 -feature add photo "comments" and "like" buttons from your account to this photo.
 -feature: "see original photo by its author" (opens in a new window0
 -randomize box arrangement
--remove console.logs
-
-
+-remove consolelogs
 */
