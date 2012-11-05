@@ -149,11 +149,11 @@ $.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access
 
 //------ populates photo meta data info on sidebar----
 
-	$('#userName').html('<p>by '+userName+'</p>');  //displays P element with photo author username
+	$('#userName').html('<p>photo by '+userName+'</p>');  //displays P element with photo author username
 
 	$('#userPhoto').html('<a href="'+userProfileUrl+'" target="_blank">'+'<img src="'+userPhotoUrl+'"></img></a>');  // displays IMG elm with photo author user profile photo
 
-	$('#originalPhoto').html('<p>original photo</p><a href="'+imgUrl+'" target="_blank">'+'<img width="150px" src="'+imgUrl+'"></img></a>');  //creates an IMG element with heading "original photo" and IMG of what completed photo should look like.
+	$('#originalPhoto').html('<p>original</p><a href="'+imgUrl+'" target="_blank">'+'<img width="150px" src="'+imgUrl+'"></img></a>');  //creates an IMG element with heading "original photo" and IMG of what completed photo should look like.
 
 	$('#userProfile').html('<a href="'+userProfileUrl+'" target="_blank">here</a>');  //displays to original author's user profile
 
@@ -183,7 +183,7 @@ $('#info').show(50).css('border','5px solid black');
 
 $('#likeButton').click(function(){
 
-	$('#photoId').html('<a>Coming Soon!</a>');
+	window.open('like.php','','width=250,height=125');
 
 /*
 	$.post('https://api.instagram.com/v1/media/'+photoId+'/likes?_method=POST', "{ access_token:"+accessToken+"}", 

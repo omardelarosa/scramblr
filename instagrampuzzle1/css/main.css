@@ -104,6 +104,27 @@ margin:0px 0px 0px 0px;
 
 #wrapper li {
 display:block;
-float:left;
 }
 
+#credits {
+align:center;
+font-size: 10px;
+position: absolute;
+top: 850px;
+left: 250px;
+}
+
+a {
+font-weight:bold;
+text-decoration:none;
+}
+
+a:hover {
+color:red;
+text-decoration:underline;
+}
+
+b:hover {
+color:red;
+text-decoration:underline;
+}
