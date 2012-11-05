@@ -10,10 +10,6 @@ accessToken = window.location.hash.slice(14);
 tagInputVal = "";
 data = {};
 
-
-
-console.log(accessToken);
-
 $('#boxes').sortable();
 
 /*   //this disables touch scrolling on iOS for #boxes element
@@ -63,7 +59,7 @@ $('#instButton').hover(  //when mouse hovers over instButton...
 
 // ----- begin "get photo and data" function" -----
 
-$('#generate').click(function(){  //---- change 'p' to submit button.
+$('#generate').click(function newImage(){  //---- change 'p' to submit button.
 
 	$('ul #boxes').empty();  //empties existing LI elements in box region
 	$('#instructions').hide(50);  //hides instructions
@@ -181,9 +177,7 @@ $('#info').show(50).css('border','5px solid black');
 
 }; // --- end of form-validation if/else statement
 
-	return false;  // <---- must add this when "submit button" is made.
-
-
+	return;  // <---- must add this when "submit button" is made.
 
 });  // ----- end "get photo and data" function" -----
 
@@ -214,7 +208,7 @@ $('#doneButton').click(function(){
 
 		} else if (i == boxNumTotal) {
 
-		alert ('You win!');
+		alert('You win!');
 
 		} else { 
 
