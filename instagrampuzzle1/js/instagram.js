@@ -1,228 +1,248 @@
-$(document).ready(function(){  
+var userName,
+	userPhotoUrl,
+	userProfileUrl,
+	userId,
+	userCaption,
+	photoId,
+	accessToken = window.location.hash.slice(14),
+	tagInputVal,
+	ajax_response = {};
 
-userName = "";
-userPhotoUrl = "";
-userProfileUrl = "";
-userId = "";
-userCaption = "";
-photoId = "";
-accessToken = window.location.hash.slice(14);
-tagInputVal = "";
-data = {};
+var getINSTAGRAM_URL = function(){
+	return "https://api.instagram.com/v1/tags/"+tagInputVal()+"/media/recent?access_token="+accessToken+"&scope=likes+comments+relationships&callback=?"
+}
 
-$('#boxes').sortable();
+// make arrays into mini-templates for HTML strings
+Array.prototype.toHTMLString = function(){
+	return this.join("")
+}
 
-/*   //this disables touch scrolling on iOS for #boxes element
-
-$('#boxes').bind('touchmove', function(e) {
-   e.preventDefault();
-}, false);
- 
-*/
-
-$('#widthInput').slider({
-	value:2,
-	min:2,
-	max:32,
-	step:2,
-	slide: function( event, ui ) {
-                $( "#puzzleWidth" ).val(ui.value+"x"+ui.value+" boxes");
-				return ui.value;
-				}
-	});
-
-$( "#puzzleWidth" ).val("2x2 boxes");
-
-//instruction button begins
-$('#instButton').click(function(){
-
-	if ( $('#instructions').css('display') == "none" ){  //checks if instructions are hidden
-		$('#instructions').show(50);
-	} else {
-		$('#instructions').hide(50);  //hides instructions
-	};
-});
-
-$('#instButton').hover(  //when mouse hovers over instButton...
-	function(){    //on function to fire
-	$('#instButton').css('color','black');
-	$('#instButton').css('background-color','white');
+var templates = {
+	//displays P element with photo author username
+	userName: function(locals){ return ['<p>','photo by ',locals.userName,'</p>']
 	},
-	function(){    //off function to fire
-	$('#instButton').css('color','white');
-	$('#instButton').css('background-color','black');
-	}
-);
 
+	// displays IMG elm with photo author user profile photo
+	userPhoto: function(locals){ return ['<a href="', locals.userProfileUrl,'" target="_blank">',
+															'<img src="',locals.userPhotoUrl,'"/>',
+														'</a>'] },
 
-//end instructions button
+	//creates an IMG element with heading "original photo" and IMG of what completed photo should look like.
+	originalPhoto: function(locals){ return ['<p>original</p>',
+																	'<a href="',locals.imgUrl,'" target="_blank">',
+																		'<img width="150px" src="', locals.imgUrl, '"/>',
+																	'</a>'] },
 
-// ----- begin "get photo and data" function" -----
+	//displays to original author's user profile
+	userProfile: function(locals){ return ['<a href="',locals.userProfileUrl,'" target="_blank">here</a>'] },
 
-$('#generate').click(function newImage(){  //---- change 'p' to submit button.
+	//displays photo caption info
+	caption: function(locals){ return ['<p>',locals.userCaption,'</p>'] },
 
-	$('ul #boxes').empty();  //empties existing LI elements in box region
-	$('#instructions').hide(50);  //hides instructions
-	
+	// imagePieceBox template
+	imagePieceBox: function(locals){ return ['<div class="box" style="" id="',locals.i+1,'">','&nbsp;','</div>'] },
 
-	var tagInputVal = $('#tagInput').attr("value");
-	var boxWidth = $('#widthInput').slider('value');  //gets slider numerical value
+	// boxes with IDs
+	boxesWithIds: function(locals){ return ['<li class="',locals.i+1,'" style="z-index:-2;"></li>']}
+}
 
-	var spaceFilter = / /g;	
-	
+var boxWidth = function(){
+	return $('#widthInput').slider('value');
+}
 
+var tagInputVal = function(){
+	return $('#tagInput').attr("value");
+}
 
-	if(spaceFilter.test(tagInputVal) == true){
-
-		alert('Please remove any spaces from your keyword or tag!');
-
-	} else if(tagInputVal == ""){   // checks if tagInputVal is empty
-		alert('Please enter a keyword or tag!');   // prompts if empty tagInputVal
-	} else {
-$.getJSON("https://api.instagram.com/v1/tags/"+tagInputVal+"/media/recent?access_token="+accessToken+"&scope=likes+comments+relationships&callback=?",function(data){   //--- begin JSON data grab---
-
-	console.log(data);
-	data = data;
-
-	index = Math.floor((Math.random()*10)+1);  //finds random integer btwn 1-10
-	imgUrl = data.data[index].images.standard_resolution.url;  //Instagram IMG URL from JSON
-	boxNumTotal = boxWidth*boxWidth;
-	
-	boxOrigSeqArr = new Array(boxNumTotal);		//makes array with sequence of original IDs
-		for(var i=0;i<boxNumTotal;i++){
-		boxOrigSeqArr[i] = i;
-		};
-	
-	boxRandSeqArr = new Array(boxNumTotal);    //makes array with for randomized IDs sequence
-		for(var i=0;i<boxNumTotal;i++){
-		boxRandSeqArr[i] = i;
-		};
-	//Randomize the order of the array:
-	boxRandSeqArr.sort(function() {return  Math.round( Math.random() )}) //Array elements now scrambled	
-	console.log(boxRandSeqArr);
-
-	for (var i=0;i<boxNumTotal;i++){   //creates box LIs with IDs of i
-		$('ul #boxes').append('<li class="'+(i+1)+'" style="z-index:-2;"></li>');
-		};
-
-	
-	for (var i=0; i< boxNumTotal ;i++) { 
-
-		$("#wrapper", function(){
-            $("<img/>").attr("src", imgUrl).appendTo("#container");        
-	});
-	$('img').height("600px");
-	$('img').width("600px");
-
-	//creates a boxes with id as i
-	
-
-
-	$('ul #boxes li:eq('+boxRandSeqArr[i]+')').append('<div class="box" style="" id="'+(i+1)+'">&nbsp;</div>'); //adds .box div to random li from boxRandSeqArr
-
-	console.log("Destination LI index is "+boxRandSeqArr[i]+" and source DIV is "+(i+1)+"");
-
-	var boxNum = (i+1)+'';  //turns i into ID that is also a string
-
-	var unitWidth = 600 / boxWidth;		//calculates (in pixels) box unit Width
-	var positionX = ((i+1)%boxWidth)*(unitWidth* -1);  //calculates X pos of boxSprite --NEED FIX
-	 
-	if ((i+1) == boxNumTotal) {		//corrects issue with "empty" box.
-		var positionY = 0;
-	} else {
-		var positionY = (Math.floor((i+1)/boxWidth))*(unitWidth * -1);   //calculates Y pos of box Sprite
-	};
-
-	$('#'+boxNum+'').attr('style','background-repeat:no-repeat;background-image:url('+imgUrl+');background-size:600px 600px;height:'+unitWidth+'px;width:'+unitWidth+'px;background-position:'+positionX+'px '+positionY+'px;');    // formats wrapper DIV to 600x600px
-	
-
-	};
-
-// ----- pulls photo-meta data from Instagram's JSON
-
+var setUserData = function(data){
 	userName = data.data[index].user.username;
 	userPhotoUrl = data.data[index].user.profile_picture;
 	userProfileUrl = data.data[index].link;
 	userId = "";
 	userCaption= data.data[index].caption.text;
 	photoId = data.data[index].id;
+}
 
-//------ populates photo meta data info on sidebar----
+var getPhotoDataCallback = function(data){  
 
-	$('#userName').html('<p>photo by '+userName+'</p>');  //displays P element with photo author username
+		// console.log(data);
+		ajax_response = data;
 
-	$('#userPhoto').html('<a href="'+userProfileUrl+'" target="_blank">'+'<img src="'+userPhotoUrl+'"></img></a>');  // displays IMG elm with photo author user profile photo
-
-	$('#originalPhoto').html('<p>original</p><a href="'+imgUrl+'" target="_blank">'+'<img width="150px" src="'+imgUrl+'"></img></a>');  //creates an IMG element with heading "original photo" and IMG of what completed photo should look like.
-
-	$('#userProfile').html('<a href="'+userProfileUrl+'" target="_blank">here</a>');  //displays to original author's user profile
-
-	$('#caption').html('<p>'+userCaption+'</p>');  //displays photo caption info
-
-
-//----- end meta data populating
-
-});   // ---- end JSON data grab----
-
-//----- begin LIKE button ----
-
-
-
-
-
-
-//----- end LIKE button ----
-
-$('#info').show(50).css('border','5px solid black');
-
-}; // --- end of form-validation if/else statement
-
-	return;  // <---- must add this when "submit button" is made.
-
-});  // ----- end "get photo and data" function" -----
-
-$('#likeButton').click(function(){
-
-	window.open('like.php','','width=250,height=125');
-
-/*
-	$.post('https://api.instagram.com/v1/media/'+photoId+'/likes?_method=POST', "{ access_token:"+accessToken+"}", 
-function(data) { 
-            console.log(accessToken);
-			console.log(data.meta.code);
-			console.log(data);
-          $('#photoId').html('<a>Liked!</a>');
-    }); 
-*/
-
-});
-
-
-$('#doneButton').click(function(){
-
-	for (i=1;i<=boxNumTotal;i++){
-
-		if ( i == $('#boxes li:eq('+i+') div').attr('id')) {
-
-		continue;
-
-		} else if (i == boxNumTotal) {
-
-		alert('You win!');
-
-		} else { 
-
-		alert('Please try again!');
+		index = Math.floor((Math.random()*10)+1);  //finds random integer btwn 1-10
+		imgUrl = data.data[index].images.standard_resolution.url;  //Instagram IMG URL from JSON
+		boxNumTotal = boxWidth()*boxWidth();
 		
-		break;
+		boxOrigSeqArr = new Array(boxNumTotal);		//makes array with sequence of original IDs
+			for(var i=0;i<boxNumTotal;i++){
+			boxOrigSeqArr[i] = i;
+			};
+		
+		boxRandSeqArr = new Array(boxNumTotal);    //makes array with for randomized IDs sequence
+			for(var i=0;i<boxNumTotal;i++){
+			boxRandSeqArr[i] = i;
+			};
+		//Randomize the order of the array:
+		boxRandSeqArr.sort(function() {return  Math.round( Math.random() )}) //Array elements now scrambled	
 
+		for (var i=0;i<boxNumTotal;i++){   //creates box LIs with IDs of i
+
+			$('ul #boxes').append( templates.boxesWithIds({i: i}).toHTMLString() );
 		};
 
-	};
+		for (var i=0; i< boxNumTotal ;i++) { 
+			$("#wrapper", function(){
+	    $("<img/>").attr("src", imgUrl).appendTo("#container");        
+		});
 
-});
+		$('img').height("600px");
+		$('img').width("600px");
+
+		//creates a boxes with id as i
+
+		$('ul #boxes li:eq('+boxRandSeqArr[i]+')').append( templates.imagePieceBox({i: i}).toHTMLString() ); //adds .box div to random li from boxRandSeqArr
+
+		var boxNum = (i+1)+'';  //turns i into ID that is also a string
+
+		var unitWidth = 600 / boxWidth();		//calculates (in pixels) box unit Width
+		var positionX = ((i+1)%boxWidth())*(unitWidth* -1);  //calculates X pos of boxSprite --NEED FIX
+		 
+		if ((i+1) == boxNumTotal) {		//corrects issue with "empty" box.
+			var positionY = 0;
+		} else {
+			var positionY = (Math.floor((i+1)/boxWidth()))*(unitWidth * -1);   //calculates Y pos of box Sprite
+		};
+
+		$('#'+boxNum+'').css({
+				backgroundRepeat: "no-repeat",
+				backgroundImage: "url('"+imgUrl+"')",
+				backgroundSize: "600px 600px",
+				height: unitWidth+'px',
+				width: unitWidth+'px',
+				backgroundPosition: positionX+'px '+positionY+'px'
+			});    // formats wrapper DIV to 600x600px
+		};
+
+	// ----- pulls photo-meta data from Instagram's JSON
+
+	setUserData(data);
+
+	$('#userName').html( templates.userName({
+														userName: userName
+												}).toHTMLString() );
+
+	$('#userPhoto').html( templates.userPhoto({
+													userProfileUrl: userProfileUrl,
+													userPhotoUrl: userPhotoUrl 
+												}).toHTMLString() ); 
+
+	$('#originalPhoto').html( templates.originalPhoto({
+													imgUrl: imgUrl
+												}).toHTMLString() );  
+	$('#userProfile').html( templates.userProfile({
+													userProfileUrl: userProfileUrl
+												}).toHTMLString() );  
+	$('#caption').html( templates.caption({
+													userCaption: userCaption
+												}).toHTMLString() );  
+
+}
 
 
+$(document).ready(function(){  
+
+
+	$('#boxes').sortable();
+
+	/*   //this disables touch scrolling on iOS for #boxes element
+
+	$('#boxes').bind('touchmove', function(e) {
+	   e.preventDefault();
+	}, false);
+	 
+	*/
+
+	$('#widthInput').slider({
+		value:2,
+		min:2,
+		max:32,
+		step:2,
+		slide: function( event, ui ) {
+        $( "#puzzleWidth" ).val(ui.value+"x"+ui.value+" boxes");
+				return ui.value;
+			}
+		});
+
+	// set default puzzle width value
+	$( "#puzzleWidth" ).val("2x2 boxes");
+
+	//instruction button callback
+	$('#instButton').click(function(){
+
+		if ( $('#instructions').css('display') == "none" ){  //checks if instructions are hidden
+			$('#instructions').show(50);
+		} else {
+			$('#instructions').hide(50);  //hides instructions
+		};
+	});
+
+	// instButton Hover Callback
+	$('#instButton').hover(  //when mouse hovers over instButton...
+		function(){    //on function to fire
+			$('#instButton').css({
+				color: 'black',
+				backgroundColor: 'white'
+			});
+		},
+		function(){    //off function to fire
+			$('#instButton').css({
+				color: 'white',
+				backgroundColor: 'black'
+			});
+		}
+	);
+
+
+	// generate button click callback
+	$('#generate').click(function(e){  //---- change 'p' to submit button.
+
+		e.preventDefault()
+
+		$('ul #boxes').empty();  //empties existing LI elements in box region
+		$('#instructions').hide(50);  //hides instructions
+
+		// regex for spaces
+		var spaceFilter = / /g;	
+
+		if(spaceFilter.test(tagInputVal()) == true){
+			alert('Please remove any spaces from your keyword or tag!');
+		} else if (tagInputVal() == "") {   // checks if tagInputVal is empty
+			alert('Please enter a keyword or tag!');   // prompts if empty tagInputVal
+		} else {
+				;
+				$.getJSON(getINSTAGRAM_URL(), getPhotoDataCallback);   // ---- end JSON data grab----
+
+				$('#info').show(50).css('border','5px solid black');
+
+		} // --- end of form-validation if/else statement
+
+	});  // ----- end "get photo and data" function" -----
+
+	$('#likeButton').click(function(){
+		alert('coming soon!')
+	});
+
+	$('#doneButton').click(function(){
+		for (var i=1;i<=boxNumTotal;i++){
+			if (i == $('#boxes li:eq('+i+') div').attr('id')) {
+				continue;
+			} else if (i == boxNumTotal) {
+				alert('You win!');
+			} else { 
+				alert('Please try again!');
+				break;
+			};
+		};
+	});
 
 });
 // ----- things to do: ---------
